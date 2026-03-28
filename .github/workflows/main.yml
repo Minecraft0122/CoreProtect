@@ -1,33 +1,40 @@
 name: Build
+
 on:
   push:
     branches:
-      - main          # 根据实际默认分支调整
+      - main  # 触发分支，通常是 main 或 master
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set up JDK 21
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '21'  # 请根据你的项目需求修改 JDK 版本，如 17, 21 等
           distribution: 'temurin'
+
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
       - name: Build with Maven
-        run: mvn -B clean verify
-      - name: Upload artifacts
+        run: mvn -B package --file pom.xml  # 如果是 Gradle，请改为 gradle build
+
+      # ========== 新增的关键步骤：上传产物 ==========
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coreprotect-jar
-          path: target/*.jar   # 根据实际 Maven 构建输出路径调整
+          name: Plugin-JAR  # 产物在 GitHub 上显示的名字
+          path: target/*.jar  # 产物路径，请根据实际情况修改
