@@ -1,28 +1,40 @@
-name: Build
+name: Build and Upload Artifact
+
 on:
   push:
     branches:
-      - master
+      - main  # 如果你的分支名是 master，请改成 master
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 21
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '11'
           distribution: 'temurin'
+
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Build
-        run: mvn -B verify
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoreProtect-Jar
+          path: target/*.jar  # 自动查找 target 目录下的 jar 文件
+          if-no-files-found: error
