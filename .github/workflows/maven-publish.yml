@@ -3,7 +3,7 @@ name: Build and Upload Artifact
 on:
   push:
     branches:
-      - main  # 如果你的分支名是 master，请改成 master
+      - master  # 如果你的分支名是 master，请改成 master
   pull_request:
     branches:
       - main
