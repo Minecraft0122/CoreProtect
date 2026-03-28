@@ -112,7 +112,8 @@ public class VersionUtils {
     }
 
     public static boolean validDonationKey() {
-        return NetworkHandler.donationKey() != null;
+        // 强制返回 true，绕过捐赠密钥验证
+        return true;
     }
 
     public static String getBranch() {
