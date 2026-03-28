@@ -35,6 +35,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CoreProtect-Jar
+          name: CoreProtect-23.1.jar
           path: target/*.jar  # 自动查找 target 目录下的 jar 文件
           if-no-files-found: error
