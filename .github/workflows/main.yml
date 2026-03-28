@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - main          # 将 master 改为 main（如果默认分支是 main）
+      - main          # 根据实际默认分支调整
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -24,5 +24,10 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build
-        run: mvn -B verify
+      - name: Build with Maven
+        run: mvn -B clean verify
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coreprotect-jar
+          path: target/*.jar   # 根据实际 Maven 构建输出路径调整
