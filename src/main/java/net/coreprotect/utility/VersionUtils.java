@@ -112,8 +112,9 @@ public class VersionUtils {
     }
 
     public static boolean validDonationKey() {
-        // 强制返回 true，绕过捐赠密钥验证
-        return true;
+        return NetworkHandler.donationKey() != null;
+
+
     }
 
     public static String getBranch() {
@@ -121,6 +122,22 @@ public class VersionUtils {
         try {
             CoreProtect instance = CoreProtect.getInstance();
             if (instance == null) {
+                // Fallback: read plugin.yml directly from classpath when instance is not yet available
+                try (InputStreamReader fallbackReader = new InputStreamReader(VersionUtils.class.getResourceAsStream("/plugin.yml"))) {
+                    String fallbackBranch = YamlConfiguration.loadConfiguration(fallbackReader).getString("branch");
+                    if (fallbackBranch != null && !fallbackBranch.equals("${project.branch}")) {
+                        if (fallbackBranch.startsWith("-")) {
+                            fallbackBranch = fallbackBranch.substring(1);
+                        }
+                        if (fallbackBranch.length() > 0) {
+                            fallbackBranch = "-" + fallbackBranch;
+                        }
+                        return fallbackBranch;
+                    }
+                }
+                catch (Exception ignored) {
+                    // ignored
+                }
                 return "";
             }
 
