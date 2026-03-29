@@ -120,8 +120,6 @@ public class CommandHandler implements CommandExecutor {
                     NetworkDebugCommand.runCommand(user, permission, argumentArray);
                 }
                 else if (corecommand.equals("migrate-db")) {
-                    Chat.sendMessage(user, Color.DARK_AQUA + "CoreProtect " + Color.WHITE + "- " + Phrase.build(Phrase.DONATION_KEY_REQUIRED));
-                    
                     Extensions.runDatabaseMigration(corecommand, user, argumentArray);
                 }
                 else {
